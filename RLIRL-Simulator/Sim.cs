@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,8 +12,11 @@ namespace RLIRL_Simulator
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        private Texture2D arrow;
+
         //Objects
         private Buggy buggy;
+        private Ball ball;
 
         //general properties
         public static int windowHeight = 1080;
@@ -39,7 +41,10 @@ namespace RLIRL_Simulator
             graphics.IsFullScreen = false;
             graphics.ApplyChanges();
 
-            buggy = new Buggy(new Vector2((windowWidth - (int) Buggy.size.X)/2, (windowHeight - (int) Buggy.size.Y) / 2));
+            IsMouseVisible = true;
+
+            buggy = new Buggy(new Vector2((windowWidth - Buggy.size.X)/2, (windowHeight - Buggy.size.Y) / 2));
+            ball = new Ball(new Vector2((windowWidth - Buggy.size.X) / 2, (windowHeight - Buggy.size.Y) / 4));
 
             base.Initialize();
         }
@@ -54,6 +59,8 @@ namespace RLIRL_Simulator
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Buggy.texture = Content.Load<Texture2D>("buggy");
+            Ball.texture = Content.Load<Texture2D>("ball");
+            arrow = Content.Load<Texture2D>("arrow");
         }
 
         /// <summary>
@@ -75,8 +82,11 @@ namespace RLIRL_Simulator
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            buggy.Move(255,10);
+            int leftWheelSpeed = (int) (GamePad.GetState(PlayerIndex.One).Triggers.Left * 255);
+            int rightWheelSpeed = (int)(GamePad.GetState(PlayerIndex.One).Triggers.Right * 255);
 
+            buggy.Move(leftWheelSpeed, rightWheelSpeed);
+            
             base.Update(gameTime);
         }
 
@@ -90,7 +100,14 @@ namespace RLIRL_Simulator
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearWrap);
 
+            //Buggy
             spriteBatch.Draw(Buggy.texture, buggy.position, Buggy.hitbox, Color.White, buggy.rotation, Buggy.origin, 1.0f, SpriteEffects.None, 1);
+
+            //Ball
+            spriteBatch.Draw(Ball.texture, ball.position, Ball.hitbox, Color.White, 0, Ball.origin, 0.5f, SpriteEffects.None, 1);
+
+            //Arrow
+            spriteBatch.Draw(arrow, buggy.position, new Rectangle(0,0,5,5), Color.White, buggy.rotation, new Vector2(0,0), 1.0f, SpriteEffects.None, 1);
 
             spriteBatch.End();
 

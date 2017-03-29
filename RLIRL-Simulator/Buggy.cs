@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,17 +7,16 @@ namespace RLIRL_Simulator
     class Buggy
     {
         public static Texture2D texture;
-        public static Vector2 size = new Vector2(50,50);
-        public static Vector2 origin = new Vector2(size.X / 2, size.Y / 3);
+        public static Vector2 size = new Vector2(35,42), origin = new Vector2(size.X / 2, size.Y / 3);
         public static Rectangle hitbox = new Rectangle(0, 0, (int) size.X, (int) size.Y);
 
         public Vector2 position;
         public float rotation;
 
-        public Buggy(Vector2 startingPosition, float startingRotation = 0)
+        public Buggy(Vector2 startPosition, float startRotation = 0)
         {
-            position = startingPosition;
-            rotation = startingRotation;
+            position = startPosition;
+            rotation = startRotation;
         }
 
         private void Update(Vector2 moveVector, float rotAngle)
@@ -29,7 +24,11 @@ namespace RLIRL_Simulator
             position = Vector2.Add(position, moveVector);
             rotation += rotAngle;
 
-            Console.WriteLine(moveVector);
+            if (position.X > Sim.windowHeight || position.X < 0 || position.Y > Sim.windowHeight ||
+                position.Y < 0)
+            {
+                position = new Vector2(Sim.windowWidth / 2.0f,Sim.windowHeight / 2.0f);
+            }
 
         }
 
@@ -42,23 +41,14 @@ namespace RLIRL_Simulator
 
             double angle;
 
-            if (leftWheelDecimal != rightWheelDecimal)
+            if (Math.Abs(leftWheelDecimal - rightWheelDecimal) > 0.001)
             {
-                angle = Math.Tan((rightWheelDecimal + leftWheelDecimal) * 5) * 0.005;
+                angle = ((leftWheelDecimal - rightWheelDecimal) / 255) * 20;
             }
             else
             {
                 angle = 0;
             }
-
-            /*int direction = 1;
-
-            if (rightWheelDecimal < leftWheelDecimal)
-            {
-                direction = -1;
-            }
-
-            angle *= direction;*/
 
             float floatAngle = (float) angle;
 
