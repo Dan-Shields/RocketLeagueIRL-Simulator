@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,6 +12,13 @@ namespace RLIRL_Simulator
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        //Objects
+        private Buggy buggy;
+
+        //general properties
+        public static int windowHeight = 1080;
+        public static int windowWidth = 1080;
 
         public Sim()
         {
@@ -26,7 +34,12 @@ namespace RLIRL_Simulator
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            graphics.PreferredBackBufferHeight = windowHeight;
+            graphics.PreferredBackBufferWidth = windowWidth;
+            graphics.IsFullScreen = false;
+            graphics.ApplyChanges();
+
+            buggy = new Buggy(new Vector2((windowWidth - (int) Buggy.size.X)/2, (windowHeight - (int) Buggy.size.Y) / 2));
 
             base.Initialize();
         }
@@ -40,7 +53,7 @@ namespace RLIRL_Simulator
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            Buggy.texture = Content.Load<Texture2D>("buggy");
         }
 
         /// <summary>
@@ -62,7 +75,7 @@ namespace RLIRL_Simulator
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            buggy.Move(255,10);
 
             base.Update(gameTime);
         }
@@ -73,9 +86,13 @@ namespace RLIRL_Simulator
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.WhiteSmoke);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearWrap);
+
+            spriteBatch.Draw(Buggy.texture, buggy.position, Buggy.hitbox, Color.White, buggy.rotation, Buggy.origin, 1.0f, SpriteEffects.None, 1);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
