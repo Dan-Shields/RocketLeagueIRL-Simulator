@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,59 +8,85 @@ namespace RLIRL_Simulator
     class Buggy
     {
         public static Texture2D texture;
-        public static Vector2 size = new Vector2(35,42), origin = new Vector2(size.X / 2, size.Y / 3);
+        public static Vector2 size = new Vector2(36,42), origin = new Vector2(size.X / 2, size.Y / 3);
         public static Rectangle hitbox = new Rectangle(0, 0, (int) size.X, (int) size.Y);
 
-        public Vector2 position;
+        public Vector2 leftWheelPosition;
+        public Vector2 rightWheelPosition;
         public float rotation;
 
         public Buggy(Vector2 startPosition, float startRotation = 0)
         {
-            position = startPosition;
+            leftWheelPosition = Vector2.Subtract(startPosition, new Vector2(18, 0));
+            rightWheelPosition = Vector2.Add(startPosition, new Vector2(18, 0));
             rotation = startRotation;
         }
 
-        private void Update(Vector2 moveVector, float rotAngle)
+        public void MoveForward(float leftWheel, float rightWheel)
         {
-            position = Vector2.Add(position, moveVector);
-            rotation += rotAngle;
+            bool left = leftWheel < rightWheel;
+            bool straight = Math.Abs(leftWheel - rightWheel) < 0.001;
 
-            if (position.X > Sim.windowHeight || position.X < 0 || position.Y > Sim.windowHeight ||
-                position.Y < 0)
+            leftWheel *= 100;
+            rightWheel *= 100;
+
+            Vector2 a, b2, c2, u, du, v, r1, r2;
+            Vector2 b1 = leftWheelPosition;
+            Vector2 c1 = rightWheelPosition;
+            float d, theta;
+
+            if (left && !straight)
             {
-                position = new Vector2(Sim.windowWidth / 2.0f,Sim.windowHeight / 2.0f);
+                d = 1.0f /(1.0f-leftWheel/rightWheel) - 1.0f;
+                v = Vector2.Subtract(rightWheelPosition, leftWheelPosition);
+                
+                u = new Vector2(v.X/36,v.Y/36); //36 is the current assumed separation of the wheels
+
+                du = new Vector2(u.X*d,u.Y*d);
+
+                a = Vector2.Add(b1, du);
+
+                theta = rightWheel / (d + 36.0f);
+
+                r1 = Vector2.Subtract(b1, a);
+                if (r1 != Vector2.Zero)
+                {
+                    r2 = new Vector2((float) (Math.Pow(d, 2) * Math.Cos(theta)) / r1.X,
+                        (float) (Math.Pow(d, 2) * Math.Cos(theta)) / r1.Y);
+                }
+                else
+                {
+                    r2 = Vector2.Zero;
+                }
+
+                b2 = Vector2.Subtract(r1, r2);
+
+                leftWheelPosition = r1;
+                rightWheelPosition = r2;
+
+                Console.WriteLine("cos(" + theta + ") = " + Math.Cos(theta));
+
+                r1 = Vector2.Subtract(c1, a);
+                if (r1 != Vector2.Zero)
+                {
+                    r2 = new Vector2((float)(Math.Pow(d + 36.0, 2) * Math.Cos(theta)) / r1.X,
+                        (float)(Math.Pow(d + 36.0, 2) * Math.Cos(theta)) / r1.Y);
+                }
+                else
+                {
+                    r2 = Vector2.Zero;
+                }
+
+                c2 = Vector2.Subtract(r1, r2);
+
+                
+
+                
+
+
+
+
             }
-
-        }
-
-        public void Move(int leftWheel, int rightWheel)
-        {
-            double rightWheelDecimal = rightWheel / 255.0;
-            double leftWheelDecimal = leftWheel / 255.0;
-
-            double magnitude = Math.Sqrt(Math.Pow(rightWheelDecimal, 2) + Math.Pow(leftWheelDecimal, 2));
-
-            double angle;
-
-            if (Math.Abs(leftWheelDecimal - rightWheelDecimal) > 0.001)
-            {
-                angle = ((leftWheelDecimal - rightWheelDecimal) / 255) * 20;
-            }
-            else
-            {
-                angle = 0;
-            }
-
-            float floatAngle = (float) angle;
-
-            float newAngle = floatAngle + rotation;
-
-            double yDistance = Math.Cos(newAngle) * -1 * magnitude;
-            double xDistance = Math.Sin(newAngle) * magnitude;
-
-            Vector2 moveVector = new Vector2((float)xDistance, (float)yDistance);
-
-            Update(moveVector, floatAngle);
         }
     }
 }

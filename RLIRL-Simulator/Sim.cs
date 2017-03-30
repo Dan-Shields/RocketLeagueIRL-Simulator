@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,6 +14,7 @@ namespace RLIRL_Simulator
         SpriteBatch spriteBatch;
 
         private Texture2D arrow;
+        private Texture2D line;
 
         //Objects
         private Buggy buggy;
@@ -43,6 +45,8 @@ namespace RLIRL_Simulator
 
             IsMouseVisible = true;
 
+            Window.Title = "RocketLeagueIRL Simulator";
+
             buggy = new Buggy(new Vector2((windowWidth - Buggy.size.X)/2, (windowHeight - Buggy.size.Y) / 2));
             ball = new Ball(new Vector2((windowWidth - Buggy.size.X) / 2, (windowHeight - Buggy.size.Y) / 4));
 
@@ -61,6 +65,9 @@ namespace RLIRL_Simulator
             Buggy.texture = Content.Load<Texture2D>("buggy");
             Ball.texture = Content.Load<Texture2D>("ball");
             arrow = Content.Load<Texture2D>("arrow");
+
+            line = new Texture2D(GraphicsDevice, 1, 1);
+            line.SetData(new[] { Color.Red });// fill the texture with white
         }
 
         /// <summary>
@@ -82,11 +89,12 @@ namespace RLIRL_Simulator
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            int leftWheelSpeed = (int) (GamePad.GetState(PlayerIndex.One).Triggers.Left * 255);
-            int rightWheelSpeed = (int)(GamePad.GetState(PlayerIndex.One).Triggers.Right * 255);
+            float leftWheelSpeed = (GamePad.GetState(PlayerIndex.One).Triggers.Left);
+            float rightWheelSpeed = (GamePad.GetState(PlayerIndex.One).Triggers.Right);
 
-            buggy.Move(leftWheelSpeed, rightWheelSpeed);
-            
+            buggy.MoveForward(leftWheelSpeed, rightWheelSpeed);
+            //Console.WriteLine(leftWheelSpeed + " / " + rightWheelSpeed + " = " + leftWheelSpeed / rightWheelSpeed);
+
             base.Update(gameTime);
         }
 
@@ -100,18 +108,44 @@ namespace RLIRL_Simulator
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearWrap);
 
+            //Buggy line
+            DrawLine(spriteBatch, buggy.leftWheelPosition, buggy.rightWheelPosition);
+
             //Buggy
-            spriteBatch.Draw(Buggy.texture, buggy.position, Buggy.hitbox, Color.White, buggy.rotation, Buggy.origin, 1.0f, SpriteEffects.None, 1);
+            //spriteBatch.Draw(Buggy.texture, buggy.position, Buggy.hitbox, Color.White, buggy.rotation, Buggy.origin, 1.0f, SpriteEffects.None, 1);
 
             //Ball
             spriteBatch.Draw(Ball.texture, ball.position, Ball.hitbox, Color.White, 0, Ball.origin, 0.5f, SpriteEffects.None, 1);
 
             //Arrow
-            spriteBatch.Draw(arrow, buggy.position, new Rectangle(0,0,5,5), Color.White, buggy.rotation, new Vector2(0,0), 1.0f, SpriteEffects.None, 1);
+            //spriteBatch.Draw(arrow, buggy.position, new Rectangle(0,0,5,5), Color.White, buggy.rotation, new Vector2(0,0), 1.0f, SpriteEffects.None, 1);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end)
+        {
+            Vector2 edge = end - start;
+            // calculate angle to rotate line
+            float angle =
+                (float)Math.Atan2(edge.Y, edge.X);
+
+
+            sb.Draw(line,
+                new Rectangle(// rectangle defines shape of line and position of start of line
+                    (int)start.X,
+                    (int)start.Y,
+                    (int)edge.Length(), //sb will strech the texture to fill this rectangle
+                    1), //width of line, change this to make thicker line
+                null,
+                Color.Red, //colour of line
+                angle,     //angle of line (calulated above)
+                new Vector2(0, 0), // point in line about which to rotate
+                SpriteEffects.None,
+                0);
+
         }
     }
 }
