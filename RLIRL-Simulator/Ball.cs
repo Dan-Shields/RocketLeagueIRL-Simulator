@@ -12,7 +12,7 @@ namespace RLIRL_Simulator
     {
         public static Texture2D texture;
         public static Vector2 size = new Vector2(25,25), origin = new Vector2(size.X/2,size.Y/2);
-        public static Rectangle hitbox = new Rectangle(0, 0, texture.Width, texture.Height);
+        public static Rectangle hitbox = new Rectangle(0, 0, 25, 25);
 
         public Vector2 position;
 
