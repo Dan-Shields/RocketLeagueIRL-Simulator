@@ -85,7 +85,7 @@ namespace RLIRL_Simulator
             int leftWheelSpeed = (int)(GamePad.GetState(PlayerIndex.One).Triggers.Left * 255);
             int rightWheelSpeed = (int)(GamePad.GetState(PlayerIndex.One).Triggers.Right * 255);
 
-            buggy.Move(255, 128);
+            buggy.Move(leftWheelSpeed, rightWheelSpeed);
 
             base.Update(gameTime);
         }

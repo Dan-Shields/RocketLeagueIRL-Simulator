@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RLIRL-Simulator-OpenGL", "RLIRL-Simulator-OpenGL\RLIRL-Simulator-OpenGL.csproj", "{67CBC4DD-FE54-453E-ADE6-69675D836F39}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RLIRL-Simulator", "RLIRL-Simulator\RLIRL-Simulator.csproj", "{67CBC4DD-FE54-453E-ADE6-69675D836F39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
