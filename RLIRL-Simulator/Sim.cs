@@ -43,7 +43,7 @@ namespace RLIRL_Simulator
 
             IsMouseVisible = true;
 
-            buggy = new Buggy(new Vector2((windowWidth - Buggy.size.X)/2, (windowHeight - Buggy.size.Y) / 2));
+            buggy = new Buggy(new Vector2((windowWidth - Buggy.size.X) / 2, (windowHeight - Buggy.size.Y) / 2));
             ball = new Ball(new Vector2((windowWidth - Buggy.size.X) / 2, (windowHeight - Buggy.size.Y) / 4));
 
             base.Initialize();
@@ -82,11 +82,11 @@ namespace RLIRL_Simulator
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            int leftWheelSpeed = (int) (GamePad.GetState(PlayerIndex.One).Triggers.Left * 255);
+            int leftWheelSpeed = (int)(GamePad.GetState(PlayerIndex.One).Triggers.Left * 255);
             int rightWheelSpeed = (int)(GamePad.GetState(PlayerIndex.One).Triggers.Right * 255);
 
-            buggy.Move(leftWheelSpeed, rightWheelSpeed);
-            
+            buggy.Move(255, 128);
+
             base.Update(gameTime);
         }
 
@@ -107,7 +107,7 @@ namespace RLIRL_Simulator
             spriteBatch.Draw(Ball.texture, ball.position, Ball.hitbox, Color.White, 0, Ball.origin, 0.5f, SpriteEffects.None, 1);
 
             //Arrow
-            spriteBatch.Draw(arrow, buggy.position, new Rectangle(0,0,5,5), Color.White, buggy.rotation, new Vector2(0,0), 1.0f, SpriteEffects.None, 1);
+            spriteBatch.Draw(arrow, buggy.position, new Rectangle(0, 0, 5, 5), Color.White, buggy.rotation, new Vector2(0, 0), 1.0f, SpriteEffects.None, 1);
 
             spriteBatch.End();
 

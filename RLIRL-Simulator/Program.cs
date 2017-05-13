@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace RLIRL_Simulator
+namespace RLIRL_Simulator_OpenGL
 {
-#if WINDOWS || LINUX
     /// <summary>
     /// The main class.
     /// </summary>
@@ -14,9 +13,8 @@ namespace RLIRL_Simulator
         [STAThread]
         static void Main()
         {
-            using (var game = new Sim())
+            using (var game = new RLIRL_Simulator.Sim())
                 game.Run();
         }
     }
-#endif
 }
